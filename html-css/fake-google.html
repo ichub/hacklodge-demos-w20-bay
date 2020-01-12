@@ -1,0 +1,81 @@
+<style>
+  button {
+    padding: 8px 8px;
+    font-size: 12pt;
+    border-radius: 4px;
+    background-color: #eee;
+    cursor: pointer;
+  }
+
+  button:hover {
+    border: 1px solid black;
+  }
+
+  input {
+    padding: 10px;
+    font-size: 15pt;
+    border-radius: 15px;
+    border: 1px solid #eee;
+    box-shadow: 0px 2px 13px -2px rgba(0, 0, 0, 0.95);
+  }
+
+  .input-container {
+    width: 480px;
+    position: relative;
+  }
+
+  .looking-glass {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+  }
+
+  .search-bar {
+    width: calc(100% - 40px);
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .page-container {
+    /* https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .button-container {
+    margin-top: 80px;
+  }
+
+  .top-links {
+    display: flex;
+    flexjustify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+</style>
+
+<div class="top-links">
+  <div><a>about</a> &nbsp; &nbsp; &nbsp; &nbsp;<a>store</a></div>
+  <div><a>gmail</a>&nbsp; &nbsp; &nbsp; &nbsp; <a>images</a></div>
+</div>
+
+<div class="page-container">
+  <img src="google.png" alt="" />
+
+  <div>
+    <div class="input-container">
+      <span class="looking-glass">Q</span>
+      <input class="search-bar" type="text" />
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button>google search</button>
+    <button>im feeling lucky</button>
+  </div>
+</div>
