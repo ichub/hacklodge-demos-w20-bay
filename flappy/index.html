@@ -1,0 +1,56 @@
+<body>
+  <h1>flappy bird</h1>
+
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+  <canvas id="canvas" width="800" height="600"></canvas>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // what is a bird?
+    // x, y coord
+    // x, y velocity
+    // size
+
+    const bird = {
+      x: 10,
+      y: 50,
+      vx: 0,
+      vy: 0,
+      size: 30
+    };
+
+    const g = 2;
+
+    function frame() {
+      update();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      draw();
+    }
+
+    function update() {
+      bird.x = bird.x + bird.vx;
+      bird.y = bird.y + bird.vy;
+
+      bird.vy += g;
+    }
+
+    function draw() {
+      ctx.fillRect(bird.x, bird.y, bird.size, bird.size);
+    }
+
+    function onKeyDown(e) {
+      bird.vy = -20;
+    }
+
+    setInterval(frame, 1000 / 30);
+
+    window.addEventListener("keydown", onKeyDown);
+  </script>
+</body>
