@@ -8,17 +8,22 @@
     }
   </style>
   <canvas id="canvas" width="800" height="600"></canvas>
-
+  <br />
+  high score: <span id="highscore"></span> <br />
+  score: <span id="score"></span>
   <script>
     const canvas = document.getElementById("canvas");
+    const higScoreElement = document.getElementById("highscore");
+    const scoreElement = document.getElementById("score");
     const ctx = canvas.getContext("2d");
+    const scoreDivisor = 12;
 
     // what is a bird?
     // x, y coord
     // x, y velocity
     // size
 
-    const bird = {
+    let bird = {
       x: 10,
       y: 50,
       vx: 0,
@@ -26,12 +31,33 @@
       size: 30
     };
 
-    const pipes = [];
+    let pipes = [];
 
     const g = 3;
     let mx = 0;
     let my = 0;
     let frameCount = 0;
+    let maxFrameCount = 0;
+
+    function reset() {
+      bird = {
+        x: 10,
+        y: 50,
+        vx: 0,
+        vy: 0,
+        size: 30
+      };
+
+      pipes = [];
+
+      if (maxFrameCount < frameCount) {
+        maxFrameCount = frameCount;
+
+        higScoreElement.innerText = Math.round(maxFrameCount / scoreDivisor);
+      }
+
+      frameCount = 0;
+    }
 
     function frame() {
       update();
@@ -48,11 +74,19 @@
       bird.vy += g;
 
       pipes.forEach(pipe => {
-        pipe.x -= 15;
+        pipe.x -= 5;
       });
 
       if (frameCount % 50 === 0) {
         pipes.push(randomPipe());
+      }
+
+      if (
+        doesBirdIntersectWithAnyPipe() ||
+        bird.y < 0 ||
+        bird.y >= 600 - bird.size
+      ) {
+        reset();
       }
     }
 
@@ -152,15 +186,11 @@
     }
 
     function draw() {
-      if (doesBirdIntersectWithAnyPipe()) {
-        ctx.fillStyle = "red";
-      } else {
-        ctx.fillStyle = "black";
-      }
-
       ctx.fillRect(bird.x, bird.y, bird.size, bird.size);
 
       pipes.forEach(drawPipe);
+
+      scoreElement.innerText = Math.round(frameCount / scoreDivisor);
     }
 
     function onKeyDown(e) {
