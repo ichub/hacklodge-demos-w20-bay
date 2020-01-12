@@ -1,7 +1,8 @@
 <body>
-  <h1>flappy bird</h1>
-
   <style>
+    body {
+      margin: 0;
+    }
     canvas {
       border: 1px solid black;
     }
@@ -25,13 +26,19 @@
       size: 30
     };
 
-    const g = 2;
+    const pipes = [];
+
+    const g = 3;
+    let mx = 0;
+    let my = 0;
+    let frameCount = 0;
 
     function frame() {
       update();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       draw();
+      frameCount++;
     }
 
     function update() {
@@ -39,18 +46,137 @@
       bird.y = bird.y + bird.vy;
 
       bird.vy += g;
+
+      pipes.forEach(pipe => {
+        pipe.x -= 15;
+      });
+
+      if (frameCount % 50 === 0) {
+        pipes.push(randomPipe());
+      }
+    }
+
+    function doesBirdIntersectWithAnyPipe() {
+      for (pipe of pipes) {
+        let top = isRectangleIntersectingWithOtherRectangle(
+          bird.x,
+          bird.y,
+          bird.size,
+          bird.size,
+          pipe.x,
+          0,
+          pipe.width,
+          pipe.holeStart
+        );
+
+        let bottom = isRectangleIntersectingWithOtherRectangle(
+          bird.x,
+          bird.y,
+          bird.size,
+          bird.size,
+          pipe.x,
+          pipe.holeStart + pipe.holeWidth,
+          pipe.width,
+          600 - (pipe.holeStart + pipe.holeWidth)
+        );
+
+        if (top || bottom) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    function drawPipe(pipe) {
+      // top part
+      ctx.fillRect(pipe.x, 0, pipe.width, pipe.holeStart);
+
+      // bottom part
+      ctx.fillRect(
+        pipe.x,
+        pipe.holeStart + pipe.holeWidth,
+        pipe.width,
+        600 - (pipe.holeStart + pipe.holeWidth)
+      );
+
+      ctx.fillStyle = "black";
+    }
+
+    function randomPipe() {
+      const holeWidth = 100 + Math.random() * 200;
+
+      return {
+        x: 800, // how far to the left this is on the screen
+        width: 20, // what is the width of the pipe
+        holeStart: Math.random() * (600 - holeWidth), // how far from the top the hole starts
+        holeWidth: holeWidth // how wide the hole is
+      };
+    }
+
+    function isRectangleIntersectingWithOtherRectangle(
+      rx1,
+      ry1,
+      rw1,
+      rh1,
+      rx2,
+      ry2,
+      rw2,
+      rh2
+    ) {
+      if (isPointInRectangle(rx1, ry1, rx2, ry2, rw2, rh2)) {
+        return true;
+      }
+
+      if (isPointInRectangle(rx1 + rw1, ry1, rx2, ry2, rw2, rh2)) {
+        return true;
+      }
+
+      if (isPointInRectangle(rx1, ry1 + rh1, rx2, ry2, rw2, rh2)) {
+        return true;
+      }
+
+      if (isPointInRectangle(rx1 + rw1, ry1 + rh1, rx2, ry2, rw2, rh2)) {
+        return true;
+      }
+    }
+
+    function isPointInRectangle(px, py, rx, ry, rw, rh) {
+      if (px >= rx && px <= rx + rw) {
+        if (py >= ry && py <= rh + ry) {
+          return true;
+        }
+      }
+
+      return false;
     }
 
     function draw() {
+      if (doesBirdIntersectWithAnyPipe()) {
+        ctx.fillStyle = "red";
+      } else {
+        ctx.fillStyle = "black";
+      }
+
       ctx.fillRect(bird.x, bird.y, bird.size, bird.size);
+
+      pipes.forEach(drawPipe);
     }
 
     function onKeyDown(e) {
       bird.vy = -20;
     }
 
+    function onMouseMove(e) {
+      mx = e.clientX;
+      my = e.clientY;
+
+      console.log(mx, my);
+    }
+
     setInterval(frame, 1000 / 30);
 
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("mousemove", onMouseMove);
   </script>
 </body>
